@@ -1,0 +1,12 @@
+{
+  "name": "GPTQuickFill",
+  "id": "1237408553636250447",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html"
+}
