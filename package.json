@@ -12,5 +12,9 @@
   "devDependencies": {
     "@figma/plugin-typings": "*",
     "typescript": "*"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.3",
+    "node-fetch": "^3.3.1"
   }
 }
