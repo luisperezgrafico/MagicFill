@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "lib": ["es6"],
+    "target": "es2017",
+    "module": "commonjs",
     "strict": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@figma"
-    ]
-  }
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "types": ["@figma/plugin-typings", "node-fetch"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

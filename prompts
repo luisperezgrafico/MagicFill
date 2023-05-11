@@ -1,0 +1,62 @@
+Give me 15 dummy text variants similar to the format "[Name:] Luis, [Phone:] 632-681-627 [Status:] inactive" \n\nAnalyze the context and change all its content with random copy but in a coherent way. Don't swap content inside brackets, e.g if the input format is "[City:]Vancouver", the output should look like "City: Rome". Notice that City was remain unchanged while "Vancouver" was randomly changed to "Rome" in the example.\n\nSeparate the variants in new lines.\n\n///////////////////////////////////\n\n
+
+
+Give me ${figma.currentPage.selection.length} dummy text variants similar to the format "${customFormat}" \n\nAnalyze the context and change ALL and EVERYTHING of its content with random copy's but in a coherent way. Don't swap content inside brackets, e.g if the input format is "[City:]Vancouver", the output should look like "City: Rome". Notice that City was remain unchanged while "Vancouver" was randomly changed to "Rome" in the example.\n\nSeparate the variants in new lines.
+
+    prompt = `Give me ${figma.currentPage.selection.length} dummy text variants similar to the format "${replicateFormat}" \n\nAnalyze the context and change ALL and EVERYTHING of its content with random copy's but in a coherent way. Don't swap content inside brackets and don't print "[]" characters, e.g if the input format is "[City:]Vancouver", the output should look like "City: Rome". Notice that "City" don't have brackets and wasn't changed while "Vancouver" was randomly changed to "Rome" in the example.\n\nSeparate the variants in new lines.`;
+
+
+    prompt = `Generate ${figma.currentPage.selection.length} dummy text variants while maintaining the format structure of "${replicateFormat}". Change ALL and EVERYTHING of its content except the words within square brackets []. For example, if the input format is "[City:]Vancouver", the output should be "City: Rome" without changing the "City:" part.\n\nSeparate the variants with an empty newline (a line containing only whitespace). Here's an example format: "${replicateFormat}"`;
+
+
+
+        prompt = `Generate ${figma.currentPage.selection.length} dummy text variants while maintaining the format structure of "${replicateFormat}". Change ALL and EVERYTHING of its content except the words within square brackets [].\n\n Here is a list of examples: \n\n if input: "[City:]Madrid" then output might be "City:Paris" (we don't change the "City:" part) \n if input is "[url:https://google.com]" then output is "url:https://google.com" (we don't change ANY of it) \n if input is "[status:active]" then output is "status:active"\n\nSeparate the variants with an empty newline (a line containing only whitespace). Here's an example format: "${replicateFormat}"`;
+
+
+
+
+    prompt = `Give this format: "${replicateFormat}"\n\n Lock the content inside square brackets so we NEVER touch or change that content, then generate ${figma.currentPage.selection.length} dummy text variants of the rest of the content, while maintaining the format structure of the given format. \n\nChange everything in a coherent way except the content inside square brackets "[]". E.g if the input format is "[City:]Vancouver", the output should look like "City: Rome". Notice that "City" don't have brackets and wasn't changed. Another e.g, if input is "[url:http.google.com]", then the output should look like "url:http.google.com".  \n\nSeparate the variants with an empty newline (a line containing only whitespace).`;
+
+
+
+        prompt = `Give this format: "${replicateFormat}"\n\n Lock the content inside square brackets so we NEVER touch or change that content, then generate ${figma.currentPage.selection.length} dummy text variants of the rest of the content, while maintaining the format structure of the given format. \n\nChange everything in a coherent way except the content inside square brackets "[]". E.g if the input format is "[City:]Vancouver", the output should look like "City: Rome". Notice that "City" don't have brackets and wasn't changed. Another e.g, if input is "[url:http.google.com]", then the output should look like "url:http.google.com".  \n\nSeparate the variants with an empty newline (a line containing only whitespace).`;
+
+
+
+
+
+${figma.currentPage.selection.length} random "${customFormat}"
+
+
+
+async function showMainUI() {
+  // ... (same as before)
+}
+showMainUI();
+
+async function saveAPIKey(apiKey: string) {
+  // ... (same as before)
+}
+
+async function openAIApi(requestBody: any): Promise<any> {
+  // ... (same as before)
+}
+
+function formatOpenAIRequest(selectedFormat: string, customFormat: string, replicateFormat: string): any {
+  let prompt;
+
+  if (selectedFormat === 'custom') {
+    prompt = `Give me ${figma.currentPage.selection.length} random "${customFormat}". Only items, exclude any other character.`;
+  } else if (selectedFormat === 'replicate') {
+    prompt = `Generate ${figma.currentPage.selection.length} dummy text variants similar to the format "${replicateFormat}". Analyze the context and change ALL and EVERYTHING of its content with random but coherent alternatives. Keep the content inside brackets unchanged but remove the brackets. For example, if the input format is "[City:]Vancouver", the output should look like "City: Rome". Separate the variants with new lines.`;
+  } else {
+    prompt = `Give me a list of ${figma.currentPage.selection.length} random ${selectedFormat} separated by new lines. Only items, exclude any other character.`;
+  }
+
+  return {
+    model: 'gpt-3.5-turbo',
+    messages: [{ role: 'user', content
+
+
+
+    prompt = `Give me ${figma.currentPage.selection.length} dummy text variants similar to the format "${replicateFormat}" \n\nAnalyze the context and change ALL and EVERYTHING of its content with random copy's but in a coherent way. Don't swap content inside brackets and don't print "[]" characters, e.g if the input format is "[City:]Vancouver", the output should look like "City: Rome". Notice that "City" don't have brackets and wasn't changed while "Vancouver" was randomly changed to "Rome" in the example.\n\nSeparate the variants in new lines.`;
