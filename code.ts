@@ -68,7 +68,7 @@ function formatOpenAIRequest(selectedFormat: string, customFormat: string, repli
   if (selectedFormat === 'custom') {
     prompt = `Give me ${figma.currentPage.selection.length} random "${customFormat}"`;
   } else if (selectedFormat === 'replicate') {
-    prompt = `Give me ${figma.currentPage.selection.length} variants similar to the format "${replicateFormat}"`;
+    prompt = `Give me ${figma.currentPage.selection.length} variants similar to the format "${replicateFormat}" separated by new lines.`;
   } else {
     prompt = `Give me a list of ${figma.currentPage.selection.length} random ${selectedFormat}`;
   }
@@ -79,6 +79,7 @@ function formatOpenAIRequest(selectedFormat: string, customFormat: string, repli
     max_tokens: 100,
   };
 }
+
 
 
 
@@ -99,7 +100,8 @@ figma.ui.onmessage = async (msg) => {
         return;
       }
 
-      const generatedItems = generatedText.split('\n').map((item: string) => item.trim().replace(/^\d+\.\s*/, ''));
+      const separator = selectedFormat === 'replicate' ? '\n' : ',';
+      const generatedItems = generatedText.split(separator).map((item: string) => item.trim());
 
       for (const [index, textNode] of textNodes.entries()) {
         const fontName = textNode.getRangeFontName(0, textNode.characters.length) as FontName;
@@ -109,14 +111,8 @@ figma.ui.onmessage = async (msg) => {
 
       figma.notify('Text nodes populated successfully.');
     }
-  } else if (msg.type === 'save-api-key') {
-    const apiKey = msg.data;
-    await saveAPIKey(apiKey);
-    figma.ui.postMessage({ type: 'api-key-saved' });
-    figma.notify('API Key Saved');
-  } else if (msg.type === 'get-api-key') {
-    const apiKey = await figma.clientStorage.getAsync('openai_api_key');
-    figma.ui.postMessage({ type: 'api-key', data: apiKey });
   }
+  // Add your existing code for handling other message types here
 };
+
 
