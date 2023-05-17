@@ -174,22 +174,26 @@ async function formatOpenAIRequest(
 function removeSquareBrackets(text: string): string {
   return text.replace(/\[(.*?)\]/g, "$1");
 }
-
 figma.ui.onmessage = async (msg) => {
   // Add your existing code for handling other message types here
 
+  // Check if the message type is "populate-text"
   if (msg.type === "populate-text") {
+    // Filter the selected nodes to only include TEXT nodes
     const textNodes = figma.currentPage.selection.filter(
       (node) => node.type === "TEXT"
     ) as Array<TextNode>;
 
+    // If no text nodes are selected, display a notification and return
     if (textNodes.length === 0) {
       figma.notify("Please select one or more text nodes to populate.");
       return;
     }
 
+    // Destructure properties from the message object
     const { selectedFormat, customFormat, replicateFormat } = msg;
 
+    // Create a request body using the formatOpenAIRequest function
     const requestBody = await formatOpenAIRequest(
       selectedFormat,
       customFormat,
@@ -200,23 +204,33 @@ figma.ui.onmessage = async (msg) => {
     const loadingNotification = figma.notify("Generating data...", {
       timeout: Infinity,
     });
+
+    // Call the openAIApi function with the request body
     const openAIResponse = await openAIApi(requestBody);
     loadingNotification.cancel();
 
+    // If a response is received from OpenAI API
     if (openAIResponse) {
+      // Get the generated text from the response
       const generatedText = openAIResponse.generatedText;
 
+      // Split the generated text into items based on the selected format
       const generatedItems = generatedText
         .split(selectedFormat === "replicate" ? "§" : "\n")
         .map((item: string) => {
+          // Trim the item and remove numbering at the beginning
           item = item.trim().replace(/^\d+\.\s*/, "");
+          // Remove curly braces around the item
           return item.replace(/{(.*?)}/g, "$1");
         });
 
+      // Iterate over the text nodes and assign generated text to them
       for (const [index, textNode] of textNodes.entries()) {
+        // Skip text nodes with no characters
         if (textNode.characters.length === 0) {
           continue;
         }
+        // Load the font asynchronously
         const fontName = textNode.getRangeFontName(
           0,
           textNode.characters.length
@@ -230,6 +244,7 @@ figma.ui.onmessage = async (msg) => {
 
       figma.notify("Text nodes populated successfully.");
     } else {
+      // If response is not received, display an error message
       console.error(
         "Failed to generate copy, please ensure your API key is valid."
       );
@@ -238,15 +253,17 @@ figma.ui.onmessage = async (msg) => {
       );
     }
   } else if (msg.type === "save-api-key") {
-    const { apiKey, selectedModel } = msg.data; // destructuring the data object
+    // Destructure apiKey and selectedModel from the message data object
+    const { apiKey, selectedModel } = msg.data;
+    // Call the saveAPIKey function with the apiKey and selectedModel
     await saveAPIKey({ apiKey, selectedModel });
-    // console.log("API Key saved:", apiKey);
-    // console.log("Model saved:", selectedModel); // added a log for the selected model
+    // Send a message to the UI that the API key is saved
     figma.ui.postMessage({ type: "api-key-saved" });
     figma.notify("API Key Saved");
   } else if (msg.type === "get-api-key") {
+    // Retrieve the API key from client storage
     const apiKey = await figma.clientStorage.getAsync("openai_api_key");
-    // console.log("Retrieved API Key:", apiKey);
+    // Send a message to the UI with the retrieved API key
     figma.ui.postMessage({ type: "api-key", data: apiKey });
   }
 

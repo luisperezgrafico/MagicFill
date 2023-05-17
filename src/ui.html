@@ -195,21 +195,27 @@
       <label for="format-select">Select dummy data type:</label>
       <div id="format-select-wrapper">
         <select id="format-select">
-          <option value="names">Names</option>
-          <option value="dates">Dates</option>
-          <option value="gmail, yahoo, outlook email addresses">Email Addresses</option>
-          <option value="phone numbers">Phone Numbers</option>
-          <option value="addresses">Addresses</option>
-          <option value="cities">Cities</option>
-          <option value="countries">Countries</option>
-          <option value="zip codes">ZIP Codes</option>
-          <option value="usernames">Usernames</option>
-          <option value="12 character passwords">Passwords</option>
-          <option value="job titles">Job Titles</option>
-          <option value="company names">Company Names</option>
-          <option value="prices">Prices</option>
-          <option value="order numbers">Order Numbers</option>
-          <!-- Add more formats here -->
+          <option value="names">👤 Names</option>
+          <option value="dates">📅 Dates</option>
+          <option value="gmail, yahoo, outlook email addresses">📧 Email Addresses</option>
+          <option value="phone numbers">📞 Phone Numbers</option>
+          <option value="addresses">📍 Addresses</option>
+          <option value="cities">🏙️ Cities</option>
+          <option value="countries">🌍 Countries</option>
+          <option value="zip codes">📮 ZIP Codes</option>
+          <option value="usernames">👥 Usernames</option>
+          <option value="12 character passwords">🔒 Passwords</option>
+          <option value="job titles">💼 Job Titles</option>
+          <option value="company names">🏢 Company Names</option>
+          <option value="prices">💰 Prices</option>
+          <option value="order numbers">🔖 Order Numbers</option>
+          <option value="product names">📦 Product Names</option>
+          <option value="believable website URLs">🌐 Website URLs</option>
+          <option value="hex color codes">🎨 Hex Color Codes</option>
+          <option value="coordinates">🗺️ Coordinates (Lat/Long)</option>
+          <option value="vehicle identification numbers">🚗 Vehicle Identification Numbers</option>
+          <option value="ISBNs">📚 ISBNs</option>
+
         </select>
       </div>
     </div>
@@ -218,11 +224,13 @@
       <input type="text" id="custom-format-input" placeholder="e.g 'Movie quotes'" />
     </div>
     <div class="align-left">
-      <label for="replicate-format-input">Or replicate a complex format:</label>
-      <textarea id="replicate-format-input" placeholder="'Date: 05-20-2022 
-Name:John Smith
-Country: New York'"></textarea>
+      <label for="replicate-format-input">Or replicate a complex format:
+      </label>
+      <textarea id="replicate-format-input" placeholder="'IP: 190.123.68.12
+Location: US, NY
+Hour: 14:00 [EST]'"></textarea>
     </div>
+    
     <button id="populate-text">Generate & Populate Text</button>
     <!-- Add the Manage API Key button -->
     <a id="manage-api-key">API Key Settings</a>
@@ -251,25 +259,32 @@ Country: New York'"></textarea>
 
     <script>
 
-
+      // This function executes after the webpage fully loads
       window.onload = function () {
+
         // Define the saveAPIKeyToStorage function
+        // This function is used to save the API key and selected model to the client storage
         function saveAPIKeyToStorage() {
+          // Get the value of the API key input field
           const apiKeyInput = document.getElementById("api-key-input");
           const apiKey = apiKeyInput.value;
 
+          // Get the value of the selected model from the dropdown
           const modelSelect = document.getElementById("model-select");
           const selectedModel = modelSelect.value;
 
+          // Send a message to the parent window with the API key and selected model
           parent.postMessage({ pluginMessage: { type: "save-api-key", data: { apiKey, selectedModel } } }, "*");
 
-          // Hide the API key modal after saving the API key
+          // Hide the API key input modal after saving the API key
           const apiKeyModal = document.getElementById("api-key-modal");
           apiKeyModal.style.display = 'none';
         }
 
 
         // Ensure the page is fully loaded before setting onclick handlers
+
+        // Set onclick handler for the button that triggers the API key input modal
         let manageApiKeyElement = document.getElementById('manage-api-key');
         if (manageApiKeyElement) {
           manageApiKeyElement.onclick = () => {
@@ -278,6 +293,7 @@ Country: New York'"></textarea>
           };
         }
 
+        // Set onclick handler for the button that closes the API key input modal
         let closeApiKeyModalElement = document.getElementById('close-api-key-modal');
         if (closeApiKeyModalElement) {
           closeApiKeyModalElement.onclick = () => {
@@ -286,28 +302,34 @@ Country: New York'"></textarea>
           };
         }
 
+        // Set onclick handler for the button that saves the API key
         let saveApiKeyButtonElement = document.getElementById('save-api-key-button');
         if (saveApiKeyButtonElement) {
-          // Set the onclick handler for the save button
           saveApiKeyButtonElement.onclick = saveAPIKeyToStorage;
         }
 
       }
 
 
+      // Set onclick handler for the button that populates the text
       document.getElementById('populate-text').onclick = () => {
+        // Get the selected format from the dropdown
         const formatSelect = document.getElementById('format-select');
+        // Get the custom format value from the input field
         const customFormatInput = document.getElementById('custom-format-input');
+        // Get the replicate format value from the input field
         const replicateFormatInput = document.getElementById('replicate-format-input');
         let selectedFormat = formatSelect.value;
         const customFormat = customFormatInput.value;
         const replicateFormat = replicateFormatInput.value;
 
+        // Check if custom format or replicate format is selected
         if (customFormat) {
           selectedFormat = 'custom';
         } else if (replicateFormat) {
           selectedFormat = 'replicate';
         }
+
 
         // Send the selected format, custom format, and replicate format to the main plugin script
         parent.postMessage({ pluginMessage: { type: 'populate-text', selectedFormat, customFormat, replicateFormat } }, '*');
@@ -361,26 +383,32 @@ Country: New York'"></textarea>
         }
       });
 
-
+      // Add an event listener to listen for messages sent from the plugin
       window.addEventListener('message', (event) => {
         const apiKeyModal = document.getElementById('api-key-modal');
 
+        // If the received message type is 'update-api-key'
         if (event.data.pluginMessage.type === 'update-api-key') {
           const apiKeyInput = document.getElementById('api-key-input');
           const modelSelect = document.getElementById("model-select");
+          // Update the apiKeyInput and modelSelect values with the received data
           apiKeyInput.value = event.data.pluginMessage.data.apiKey;
           modelSelect.value = event.data.pluginMessage.data.selectedModel;
         }
 
+        // If the received message type is 'show-api-key-modal'
         if (event.data.pluginMessage.type === 'show-api-key-modal') {
+          // Display the apiKeyModal by setting its display style to 'flex'
           apiKeyModal.style.display = 'flex';
         }
 
+        // If the received message type is 'hide-api-key-modal'
         if (event.data.pluginMessage.type === 'hide-api-key-modal') {
+          // Hide the apiKeyModal by setting its display style to 'none'
           apiKeyModal.style.display = 'none';
         }
-
       });
+
 
 
     </script>
