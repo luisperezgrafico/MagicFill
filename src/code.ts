@@ -1,11 +1,23 @@
 async function showMainUI() {
   figma.showUI(__html__, { width: 250, height: 368 });
 
-  // Retrieve the stored API key and model from Figma client storage
+  // Retrieve the stored API key from Figma client storage
   const apiKey = await figma.clientStorage.getAsync("openai_api_key");
+
+  // Retrieve the stored selectedModel from Figma client storage. Use 'let',
+  // because its value might get reassigned later
   let selectedModel = await figma.clientStorage.getAsync(
     "openai_selected_model"
   );
+
+  // Retrieve the stored selectedFormat, customFormat, and replicateFormat values from Figma client storage
+  const [customFormat, replicateFormat] = await Promise.all([
+    figma.clientStorage.getAsync("customFormat"),
+    figma.clientStorage.getAsync("replicateFormat"),
+  ]);
+
+  console.log("Inputs loaded", replicateFormat, customFormat)
+
 
   // If selectedModel is undefined, set it to the default model
   if (!selectedModel) {
@@ -22,13 +34,23 @@ async function showMainUI() {
     // console.log("API Key not found. Showing API Key modal.");
     figma.ui.postMessage({ type: "show-api-key-modal" });
   } else {
-    // If API key exists, send the stored API key and model to the UI
-    // console.log("Sending stored API Key to UI:", apiKey);
-    // console.log("Sending stored Model to UI:", selectedModel);
+    // If API key exists, send the stored API key, model, and our fields to the UI
     figma.ui.postMessage({
       type: "update-api-key",
-      data: { apiKey, selectedModel },
+      data: {
+        apiKey,
+        selectedModel,
+      },
     });
+
+    figma.ui.postMessage({
+      type: "load-input-values",
+      data: {
+        customFormat: customFormat || "", // provide fallback value when no data
+        replicateFormat: replicateFormat || "", // provide fallback value when no data
+      },
+    });
+
     figma.ui.postMessage({ type: "hide-api-key-modal" });
   }
 }
@@ -199,6 +221,11 @@ figma.ui.onmessage = async (msg) => {
       customFormat,
       replicateFormat
     );
+
+    // Set the data to the storage.
+    figma.clientStorage.setAsync("customFormat", customFormat);
+    figma.clientStorage.setAsync("replicateFormat", replicateFormat);
+    console.log("Inputs stored", replicateFormat, customFormat)
 
     // Display a loading notification
     const loadingNotification = figma.notify("Generating data...", {

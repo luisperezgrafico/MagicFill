@@ -230,7 +230,7 @@
 Location: US, NY
 Hour: 14:00 [EST]'"></textarea>
     </div>
-    
+
     <button id="populate-text">Generate & Populate Text</button>
     <!-- Add the Manage API Key button -->
     <a id="manage-api-key">API Key Settings</a>
@@ -260,7 +260,7 @@ Hour: 14:00 [EST]'"></textarea>
     <script>
 
       // This function executes after the webpage fully loads
-      window.onload = function () {
+      window.onload = async function () {
 
         // Define the saveAPIKeyToStorage function
         // This function is used to save the API key and selected model to the client storage
@@ -280,6 +280,7 @@ Hour: 14:00 [EST]'"></textarea>
           const apiKeyModal = document.getElementById("api-key-modal");
           apiKeyModal.style.display = 'none';
         }
+
 
 
         // Ensure the page is fully loaded before setting onclick handlers
@@ -407,6 +408,15 @@ Hour: 14:00 [EST]'"></textarea>
           // Hide the apiKeyModal by setting its display style to 'none'
           apiKeyModal.style.display = 'none';
         }
+
+        // Added condition to handle "load-input-values" message type
+        if (event.data.pluginMessage.type === 'load-input-values') {
+          const { customFormat, replicateFormat } = event.data.pluginMessage.data;
+
+          document.getElementById('custom-format-input').value = customFormat;
+          document.getElementById('replicate-format-input').value = replicateFormat;
+        }
+
       });
 
 
