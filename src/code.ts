@@ -191,11 +191,21 @@ async function formatOpenAIRequest(
   return payload;
 }
 
-// Removes Square brackets from output
+function sanitizeText(text: string): string { 
+  // Remove content inside square brackets (inclusive of brackets)
+  let cleanedText = text.replace(/\[(.*?)\]/g, "$1");
 
-function removeSquareBrackets(text: string): string {
-  return text.replace(/\[(.*?)\]/g, "$1");
+  // While loop to detect and remove leading and trailing single(') or double(") quote characters. 
+  while (/^["']|["']$/.test(cleanedText)) { 
+    // If any leading or trailing single(') or double(") quote characters are present, 
+    // replace these characters with an empty string (i.e., remove them)
+    cleanedText = cleanedText.replace(/(^["']|["']$)/g, "");
+  }
+  // Returns the final sanitized text
+  return cleanedText;
 }
+
+
 figma.ui.onmessage = async (msg) => {
   // Add your existing code for handling other message types here
 
@@ -263,8 +273,8 @@ figma.ui.onmessage = async (msg) => {
           textNode.characters.length
         ) as FontName;
         await figma.loadFontAsync(fontName);
-        // Call the removeSquareBrackets function before assigning the text
-        textNode.characters = removeSquareBrackets(
+        // Call the sanitizeText function before assigning the text
+        textNode.characters = sanitizeText(
           generatedItems[index % generatedItems.length]
         );
       }
